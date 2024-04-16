@@ -5,6 +5,7 @@ using SistemaVentasDavid.Client.Pages;
 using SistemaVentasDavid.Components;
 using SistemaVentasDavid.Components.Account;
 using SistemaVentasDavid.Data;
+using SistemaVentasDavid.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,6 +37,12 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 	.AddDefaultTokenProviders();
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
+
+
+
+
+//Services
+builder.Services.AddScoped<TiposContribuyenteService>();
 
 var app = builder.Build();
 
