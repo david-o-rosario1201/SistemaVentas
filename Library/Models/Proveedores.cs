@@ -60,4 +60,7 @@ public class Proveedores
 	public string Nota { get; set; } = string.Empty;
 
 	public bool Eliminado { get; set; } = false;
+
+	[ForeignKey("ProveedorId")]
+	public ICollection<ProveedoresDetalle> ProveedorDetalle { get; set; } = new List<ProveedoresDetalle>();
 }
