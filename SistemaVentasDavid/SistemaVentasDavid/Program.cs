@@ -1,3 +1,4 @@
+using Library.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -43,6 +44,7 @@ builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSe
 
 //Services
 builder.Services.AddScoped<TiposContribuyenteService>();
+builder.Services.AddScoped<ContactosService>();
 
 var app = builder.Build();
 
