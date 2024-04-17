@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @inject NavigationManager navigation
 @inject ProveedoresService proveedoresService
+@inject TiposContribuyenteService tiposContribuyenteService
 
 <PageTitle>Proveedores</PageTitle>
 <div class="container">
@@ -9,6 +10,27 @@
 		@*Header*@
 		<div class="card-header text-center">
 			<h1><strong>Proveedores</strong></h1>
+			<div class="d-flex align-items-start">
+				<div class="container">
+					<div class="row">
+						<div class="d-flex align-items-start">
+							<div class="px-2">
+								@* <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
+									<i class="bi bi-box-arrow-left" /> Volver
+								</button> *@
+							</div>
+							<button type="button" class="btn btn-outline-primary" @onclick="IrACrear">
+								<i class="bi bi-plus-circle" /> Crear
+							</button>
+							<div class="col text-end">
+								@* <button type="button" class="btn btn-back-to-history" @onclick="IrAHistorial">
+									<i class="bi bi-newspaper"></i> Historial
+								</button> *@
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 		@*Body*@
 		<div class="card-body text-center">
@@ -43,6 +65,7 @@
 				<div class="mb-3">
 					<div class="row align-items-center">
 						<label class="form-label" for="filtro"><strong>Filtro</strong></label>
+						@*Select*@
 						<div class="col-3">
 							<InputSelect id="filtro" class="form-select" @bind-Value="filtro">
 								<option>Elige una opci&oacute;n</option>
@@ -52,13 +75,69 @@
 								<option value="rnc">RNC</option>
 							</InputSelect>
 						</div>
+						@*Flecha*@
+						<div class="col-auto miFlecha">
+							<p>→</p>
+						</div>
+						@*Datos a filtrar*@
+						<div class="col-4">
+							<div class="input-group">
+								<InputText class="form-control" @bind-Value="valorFiltro" placeholder="Ingrese un dato para filtrar"></InputText>
+								<button class="btn btn-outline-primary" @onclick="Buscar"><i class="bi bi-search" /></button>
+							</div>
+						</div>
+						@*Restablecer*@
+						<div class="col-auto">
+							<button class="btn btn-outline-secondary" @onclick="Restablecer"><i class="bi bi-arrow-clockwise" /> Restablecer</button>
+						</div>
 					</div>
 				</div>
+
+				@*Tabla*@
+				<table class="table table-bordered miTabla">
+					<thead>
+						<tr>
+							<th>ProveedorId</th>
+							<th>Fecha de Creaci&oacute;n</th>
+							<th>Empresa</th>
+							<th>Direcci&oacute;n</th>
+							<th>Contribuyente</th>
+							<th>RNC</th>
+						</tr>
+					</thead>
+					<tbody>
+						@foreach(var proveedor in proveedores)
+						{
+							<tr>
+								<td>@proveedor.ProveedorId</td>
+								<td>@proveedor.FechaCreacion.ToShortDateString()</td>
+								<td>@proveedor.Empresa</td>
+								<td>@proveedor.Direccion</td>
+								<td>@BuscarContribuyente(proveedor.TipoContribuyenteId)</td>
+								<td>@proveedor.RNC</td>
+								<td>
+									<div class="btn-group" role="group">
+										<button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles">
+											<i class="bi bi-eye"></i>
+										</button>
+
+										<button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
+											<i class="bi bi-pencil-square"></i>
+										</button>
+										<button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
+											<i class="bi bi-trash3-fill"></i>
+										</button>
+									</div>
+								</td>
+							</tr>
+						}
+					</tbody>
+				</table>
 			}
 		</div>
 		@*Footer*@
 		<div class="card-footer text-center">
-			<h1><strong>Proveedores</strong></h1>
+			<p><strong>Total de Proveedores:</strong> @proveedores.Count</p>
 		</div>
 	</div>
 </div>
@@ -66,7 +145,55 @@
 @code {
 	public bool loading { get; set; } = true;
 	public List<Proveedores> proveedores { get; set; } = new List<Proveedores>();
+	public List<TiposContribuyente> tiposContribuyente { get; set; } = new List<TiposContribuyente>();
 	public DateTime desde { get; set; } = DateTime.Today;
 	public DateTime hasta { get; set; } = DateTime.Today;
 	public string filtro { get; set; }
+	public string valorFiltro { get; set; }
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		proveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+		tiposContribuyente = await tiposContribuyenteService.Listar(tc => tc.TipoContribuyenteId > 0);
+
+		loading = false;
+
+		if (proveedores.Count == 0)
+			StateHasChanged();
+	}
+
+
+	public async Task Buscar()
+	{
+
+	}
+
+	public async Task Restablecer()
+	{
+
+	}
+
+	public string BuscarContribuyente(int id)
+	{
+		var contribuyente = tiposContribuyente.FirstOrDefault(tc => tc.TipoContribuyenteId == id);
+		return contribuyente.TipoContribuyente;
+	}
+
+	public void IrACrear()
+	{
+		navigation.NavigateTo("/CreateProveedores");
+	}
+	public void IrADetalles(int id)
+	{
+		navigation.NavigateTo($"/ViewProveedores/proveedorId={id}");
+	}
+	public void IrAEditar(int id)
+	{
+		navigation.NavigateTo($"/EditProveedores/proveedorId={id}");
+	}
+	public void IrAEliminar(int id)
+	{
+		navigation.NavigateTo($"/DeleteProveedores/proveedorId={id}");
+	}
 }
