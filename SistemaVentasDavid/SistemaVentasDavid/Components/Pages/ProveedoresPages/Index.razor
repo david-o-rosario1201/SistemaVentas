@@ -1,0 +1,72 @@
+﻿@page "/Proveedores"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject ProveedoresService proveedoresService
+
+<PageTitle>Proveedores</PageTitle>
+<div class="container">
+	<div class="card shadow-lg">
+		@*Header*@
+		<div class="card-header text-center">
+			<h1><strong>Proveedores</strong></h1>
+		</div>
+		@*Body*@
+		<div class="card-body text-center">
+			@if (loading)
+			{
+				<div class="d-flex justify-content-center">
+					<div class="spinner-border text-info">
+					</div>
+				</div>
+			}
+			else if (proveedores.Count == 0)
+			{
+				<h1 class="miMensaje"><i class="bi bi-exclamation-triangle" /> No hay proveedores creados</h1>
+			}
+			else
+			{
+				@*Fechas*@
+				<div class="mb-3">
+					<div class="row">
+						<div class="col-3">
+							<label class="form-label" for="desde"><strong>Desde</strong></label>
+							<InputDate id="desde" class="form-control" @bind-Value="desde"></InputDate>
+						</div>
+						<div class="col-3">
+							<label class="form-label" for="hasta"><strong>Hasta</strong></label>
+							<InputDate id="hasta" class="form-control" @bind-Value="hasta"></InputDate>
+						</div>
+					</div>
+				</div>
+
+				@*Filtro*@
+				<div class="mb-3">
+					<div class="row align-items-center">
+						<label class="form-label" for="filtro"><strong>Filtro</strong></label>
+						<div class="col-3">
+							<InputSelect id="filtro" class="form-select" @bind-Value="filtro">
+								<option>Elige una opci&oacute;n</option>
+								<option value="id">Id</option>
+								<option value="empresa">Empresa</option>
+								<option value="contribuyente">Contribuyente</option>
+								<option value="rnc">RNC</option>
+							</InputSelect>
+						</div>
+					</div>
+				</div>
+			}
+		</div>
+		@*Footer*@
+		<div class="card-footer text-center">
+			<h1><strong>Proveedores</strong></h1>
+		</div>
+	</div>
+</div>
+
+@code {
+	public bool loading { get; set; } = true;
+	public List<Proveedores> proveedores { get; set; } = new List<Proveedores>();
+	public DateTime desde { get; set; } = DateTime.Today;
+	public DateTime hasta { get; set; } = DateTime.Today;
+	public string filtro { get; set; }
+}
