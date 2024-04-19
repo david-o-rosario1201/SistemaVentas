@@ -1,5 +1,54 @@
-﻿<h3>Create</h3>
+﻿@page "/CreateProveedores"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject ProveedoresService proveedoresService
+@inject TiposContribuyenteService tiposContribuyenteService
+@inject ContactosService contactosService
+
+<PageTitle>Crear Nuevo Proveedor</PageTitle>
+<EditForm Model="proveedor" OnValidSubmit="Crear">
+	<DataAnnotationsValidator/>
+	<div class="container">
+		<div class="card shadow-lg">
+			@*Header*@
+			<div class="card-header">
+				<h1 class="text-center"><strong>Crear Nuevo Proveedor</strong></h1>
+			</div>
+			@*Body*@
+			<div class="card-body">
+				<div class="row mb-3">
+					@*Id*@
+					<div class="col-4">
+						<label class="form-label" for="id"><strong>ProveedorId</strong></label>
+						<InputNumber id="id" class="form-control" @bind-Value="proveedor.ProveedorId"></InputNumber>
+					</div>
+					@*Id*@
+					<div class="col-4">
+						<label class="form-label" for="id"><strong>ProveedorId</strong></label>
+						<InputNumber id="id" class="form-control" @bind-Value="proveedor.ProveedorId"></InputNumber>
+					</div>
+					@*Id*@
+					<div class="col-4">
+						<label class="form-label" for="id"><strong>ProveedorId</strong></label>
+						<InputNumber id="id" class="form-control" @bind-Value="proveedor.ProveedorId"></InputNumber>
+					</div>
+				</div>
+			</div>
+			@*Footer*@
+			<div class="card-footer">
+				<h1 class="text-center"><strong>Crear Nuevo Proveedor</strong></h1>
+			</div>
+		</div>
+	</div>
+</EditForm>
 
 @code {
+	public Proveedores proveedor { get; set; } = new Proveedores();
 
+
+
+	public async Task Crear()
+	{
+
+	}
 }
