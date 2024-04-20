@@ -14,7 +14,7 @@ public class Proveedores
 	public int ProveedorId { get; set; }
 
 	[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-	public DateTime FechaCreacion { get; set; }
+	public DateTime FechaCreacion { get; set; } = DateTime.Today;
 
 	[Required(ErrorMessage = "Debe ingresar el nombre de la empresa.")]
 	[StringLength(32, ErrorMessage = "El límite es de 32 caracteres.")]
