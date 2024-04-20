@@ -2,6 +2,7 @@ using Library.Models;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Radzen;
 using SistemaVentasDavid.Client.Pages;
 using SistemaVentasDavid.Components;
 using SistemaVentasDavid.Components.Account;
@@ -39,13 +40,13 @@ builder.Services.AddIdentityCore<ApplicationUser>(options => options.SignIn.Requ
 
 builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-
-
-
 //Services
 builder.Services.AddScoped<TiposContribuyenteService>();
 builder.Services.AddScoped<ContactosService>();
 builder.Services.AddScoped<ProveedoresService>();
+
+//Radzen
+builder.Services.AddScoped<NotificationService>();
 
 var app = builder.Build();
 
