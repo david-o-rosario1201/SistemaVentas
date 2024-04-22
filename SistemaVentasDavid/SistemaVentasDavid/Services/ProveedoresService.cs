@@ -51,7 +51,7 @@ public class ProveedoresService
 	public async Task<Proveedores?> BuscarId(int id)
 	{
 		return await _contexto.Proveedores
-			.Include(d => d.ProveedorDetalle)
+			.Include(d => d.ProveedorDetalle.Where(d => d.Eliminado == false))
 			.AsNoTracking()
 			.FirstOrDefaultAsync(p => p.ProveedorId == id);
 	}
@@ -59,7 +59,7 @@ public class ProveedoresService
 	public async Task<List<Proveedores>> Listar(Expression<Func<Proveedores, bool>> criterio)
 	{
 		return await _contexto.Proveedores
-			.Include(d => d.ProveedorDetalle)
+			.Include(d => d.ProveedorDetalle.Where(d => d.Eliminado == false))
 			.AsNoTracking()
 			.Where(criterio)
 			.ToListAsync();
