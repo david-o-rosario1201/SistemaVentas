@@ -25,8 +25,6 @@ public class Proveedores
 	[StringLength(25, ErrorMessage = "El límite es de 32 caracteres.")]
 	public string Representante { get; set; }
 
-	[Required(ErrorMessage = "Debe ingresar el número de cédula del representante.")]
-	[StringLength(13, ErrorMessage = "El límite es de 11 caracteres.")]
 	public string CedulaRepresentante { get; set; }
 
 	[Required(ErrorMessage = "Debe ingresar la dirección de la empresa")]
