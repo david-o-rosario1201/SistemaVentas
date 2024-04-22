@@ -1,0 +1,593 @@
+﻿@page "/CreateProveedores"
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject ProveedoresService proveedoresService
+@inject TiposContribuyenteService tiposContribuyenteService
+@inject ContactosService contactosService
+@inject NotificationService notificationService
+
+<PageTitle>Crear Nuevo Proveedor</PageTitle>
+<RadzenNotification />
+<EditForm Model="proveedor" OnValidSubmit="Crear" OnInvalidSubmit="ErrorAlCrear">
+	<DataAnnotationsValidator/>
+	<div class="container">
+		<div class="card shadow-lg">
+			@*Header*@
+			<div class="card-header">
+				<h1 class="text-center"><strong>Crear Nuevo Proveedor</strong></h1>
+			</div>
+			@*Body*@
+			<div class="card-body">
+				@*Fila 1*@
+				<div class="row mb-3">
+					@*Id*@
+					<div class="col-4">
+						<label class="form-label" for="id"><strong>ProveedorId</strong></label>
+						<InputNumber id="id" class="form-control" @bind-Value="proveedor.ProveedorId" readonly></InputNumber>
+					</div>
+					@*Fecha de Creacion*@
+					<div class="col-4">
+						<label class="form-label" for="fecha"><strong>Fecha de Creaci&oacute;n</strong></label>
+						<InputDate id="fecha" class="form-control" @bind-Value="proveedor.FechaCreacion" readonly></InputDate>
+					</div>
+					@*Empresa*@
+					<div class="col-4">
+						<label class="form-label" for="empresa"><strong>Empresa</strong></label>
+						<InputText id="empresa" class="form-control" @bind-Value="proveedor.Empresa" placeholder="Ej: Coca-Cola"></InputText>
+						<spam class="mensajeError">@empresaMensaje</spam>
+						<ValidationMessage For="@(()=> proveedor.Empresa)"></ValidationMessage>
+					</div>
+				</div>
+				@*Fila 2*@
+				<div class="row mb-3">
+					@*Representante*@
+					<div class="col-4">
+						<label class="form-label" for="representante"><strong>Representante</strong></label>
+						<InputText id="representante" class="form-control" @bind-Value="proveedor.Representante" placeholder="Ej:Juan Perez"></InputText>
+						<ValidationMessage For="@(()=> proveedor.Representante)"></ValidationMessage>
+					</div>
+					@*Cedula*@
+					<div class="col-4">
+						<label class="form-label" for="cedula"><strong>C&eacute;dula</strong></label>
+						<InputText id="fecha" class="form-control" @bind-Value="proveedor.CedulaRepresentante" @oninput="PonerGuionCedula" placeholder="Ej: 402-3457365-3"></InputText>
+						<spam class="mensajeError">@cedulaMensaje</spam>
+					</div>
+					@*Direccion*@
+					<div class="col-4">
+						<label class="form-label" for="direccion"><strong>Direccion</strong></label>
+						<InputText id="direccion" class="form-control" @bind-Value="proveedor.Direccion" placeholder="Ej: Ave. Libertad #57, Santiago"></InputText>
+						<ValidationMessage For="@(()=> proveedor.Direccion)"></ValidationMessage>
+					</div>
+				</div>
+				@*Fila 3*@
+				<div class="row mb-3">
+					@*Email*@
+					<div class="col-4">
+						<label class="form-label" for="email"><strong>Email</strong></label>
+						<InputText id="email" class="form-control" @bind-Value="proveedor.Email" placeholder="Ej: cocacola@gmail.com.do"></InputText>
+						<spam class="mensajeError">@emailMensaje</spam>
+						<ValidationMessage For="@(()=> proveedor.Email)"></ValidationMessage>
+					</div>
+					@*Numero de Cuenta*@
+					<div class="col-4">
+						<label class="form-label" for="cuenta"><strong>N&uacute;mero de Cuenta</strong></label>
+						<InputText id="cuenta" class="form-control" @bind-Value="proveedor.NumeroCuenta" placeholder="Ej: 90261231341"></InputText>
+						<spam class="mensajeError">@cuentaMensaje</spam>
+						<ValidationMessage For="@(()=> proveedor.NumeroCuenta)"></ValidationMessage>
+					</div>
+					@*Banco*@
+					<div class="col-4">
+						<label class="form-label" for="banco"><strong>Banco</strong></label>
+						<InputText id="banco" class="form-control" @bind-Value="proveedor.Banco" placeholder="Ej: BanReservas"></InputText>
+						<ValidationMessage For="@(()=> proveedor.Banco)"></ValidationMessage>
+					</div>
+				</div>
+				@*Fila 4*@
+				<div class="row mb-3">
+					@*Contribuyente*@
+					<div class="col-4">
+						<label class="form-label" for="contribuyente"><strong>Contribuyente</strong></label>
+						<InputSelect id="contribuyente" class="form-select" @bind-Value="proveedor.TipoContribuyenteId">
+							<option value="0">Elige una opci&oacute;n</option>
+							@foreach (var contribuyente in tiposContribuyente)
+							{
+								<option value="@contribuyente.TipoContribuyenteId">@contribuyente.TipoContribuyente</option>
+							}
+						</InputSelect>
+						<ValidationMessage For="@(()=> proveedor.TipoContribuyenteId)"></ValidationMessage>
+					</div>
+					@*RNC*@
+					<div class="col-4">
+						<label class="form-label" for="rnc"><strong>RNC</strong></label>
+						<InputText id="rnc" class="form-control" @bind-Value="proveedor.RNC" placeholder="Ej: 05700011276"></InputText>
+						<spam class="mensajeError">@cuentaMensaje</spam>
+						<ValidationMessage For="@(()=> proveedor.RNC)"></ValidationMessage>
+					</div>
+				</div>
+				@*Nota*@
+				<div class="col-12 mb-3">
+					<label class="form-label" for="nota"><strong>Nota</strong></label>
+					<label><em>(Opcional)</em></label>
+					<InputTextArea id="nota" class="form-control" @bind-Value="proveedor.Nota" placeholder="Ingrese una nota"></InputTextArea>
+					<ValidationMessage For="@(()=> proveedor.Nota)"></ValidationMessage>
+				</div>
+
+				@*Detalles*@
+				<fieldset class="border-primmary border border-2">
+					@*Body*@
+					<div class="card-body">
+						@*Seccion 1*@
+						<section class="row mb-3">
+							<h3><strong>N&uacute;meros</strong></h3>
+							<div class="row align-content-center">
+								@*Numero*@
+								<div class="col-4">
+									<InputSelect class="form-select" @bind-Value="tipo">
+										<option value="0">Elige una opci&oacute;n</option>
+										@foreach (var numero in numeros)
+										{
+											<option value="@numero.NumeroId">@numero.Numero</option>
+										}
+									</InputSelect>
+								</div>
+								@*Descripcion*@
+								<div class="col-4">
+									<InputText class="form-control" @bind-Value="descripcion" @oninput="PonerGuionNumero" placeholder="Ej: 809-284-3031"></InputText>
+								</div>
+								@*Boton*@
+								<div class="col-4 d-flex align-items-end">
+									<button type="button" class="btn btn-outline-success" @onclick="AgregarDetalle"><i class="bi bi-plus-circle" /> Agregar</button>
+								</div>
+							</div>
+						</section>
+						@*Seccion 2*@
+						<section>
+							@if(proveedor.ProveedorDetalle.Count(d => d.Eliminado == false) > 0)
+							{
+								@*Table Detalles*@
+								<table class="table table-bordered miTabla">
+									<thead>
+										<tr>
+											<th>Tipo de N&uacute;mero</th>
+											<th>N&uacute;mero</th>
+											<th></th>
+										</tr>
+									</thead>
+									<tbody>
+										@foreach (var detalle in proveedor.ProveedorDetalle)
+										{
+											@if(detalle.Eliminado == false)
+											{
+												<tr>
+													<td>@ObtenerTipoContacto(detalle.ContactoId)</td>
+													<td>@detalle.Contacto</td>
+													<td><button type="button" class="btn btn-outline-danger" @onclick="()=> ValidarEliminarDetalle(detalle)"><i class="bi bi-trash3-fill" /></button></td>
+												</tr>
+											}
+										}
+									</tbody>
+								</table>
+								<p><strong>Total Números de Contactos: </strong>@proveedor.ProveedorDetalle.Count(d => d.Eliminado == false)</p>
+							}
+						</section>
+					</div>
+				</fieldset>
+			</div>
+			@*Footer*@
+			<div class="card-footer d-flex justify-content-center">
+				<div class="px-2">
+					<button type="button" class="btn btn-outline-primary" @onclick="Volver"><i class="bi bi-box-arrow-left" /> Volver</button>
+				</div>
+				<button type="submit" class="btn btn-outline-success"><i class="bi bi-floppy-fill" /> Crear</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modal#1 -->
+	<div class="modal fade" id="exampleModal1" data-bs-backdrop="static" data-bs-keyboard="false"  tabindex="-1" aria-labelledby="exampleModal1Label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModal1Label"><strong>Datos sin guardar</strong></h1>
+				</div>
+				<div class="modal-body">
+					¿Estás seguro de que quieres salir sin guardar?
+					<em>Si deseas salir pulsa "Salir"</em>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CerrarModal">Cerrar</button>
+					<button type="button" class="btn btn-primary" @onclick="VolverAtras">Salir</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@if (mostrarModal1)
+	{
+		<script>
+			var myModal = new bootstrap.Modal(document.getElementById('exampleModal1'));
+			myModal.show();
+		</script>
+	}
+
+	<!-- Modal#2 -->
+	<div class="modal fade" id="exampleModal2" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="exampleModal2Label" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h1 class="modal-title fs-5" id="exampleModal2Label"><strong>Eliminar Detalle</strong></h1>
+				</div>
+				<div class="modal-body">
+					¿Estás seguro de que quieres eliminar este detalle?
+					<ul>
+						<li><strong>Tipo de N&uacute;mero:</strong> @descripcionModal</li>
+						<li><strong>N&uacute;mero:</strong> @detalleModal.Contacto</li>
+					</ul>
+					<em>Si deseas elimianar el detalle pulsa "Aceptar"</em>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal" @onclick="CerrarModal">Cerrar</button>
+					<button type="button" class="btn btn-primary" data-bs-dismiss="modal" @onclick="EliminarDetalle">Aceptar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	@if (mostrarModal2)
+	{
+		<script>
+			var myModal = new bootstrap.Modal(document.getElementById('exampleModal2'));
+			myModal.show();
+		</script>
+	}
+</EditForm>
+
+@code {
+	public Proveedores proveedor { get; set; } = new Proveedores();
+	public List<TiposContribuyente> tiposContribuyente = new List<TiposContribuyente>();
+	public string empresaMensaje { get; set; }
+	public string cedulaMensaje { get; set; }
+	public string emailMensaje { get; set; }
+	public string cuentaMensaje { get; set; }
+	public string rncMensaje { get; set; }
+
+	//Detalle
+	public int tipo { get; set; }
+	public string descripcion { get; set; }
+	public List<Numeros> numeros = new List<Numeros>();
+
+	//modal
+	public bool mostrarModal1 { get; set; }
+	public bool mostrarModal2 { get; set; }
+	public string descripcionModal { get; set; }
+	public ProveedoresDetalle detalleModal { get; set; } = new ProveedoresDetalle();
+
+	protected override async Task OnInitializedAsync()
+	{
+		await Task.Delay(500);
+		tiposContribuyente = await tiposContribuyenteService.Listar(tc => tc.TipoContribuyenteId > 0);
+		numeros = await contactosService.Listar(n => n.NumeroId > 0);
+	}
+
+	public async Task Crear()
+	{
+		//Cedula empty
+		if (String.IsNullOrEmpty(proveedor.CedulaRepresentante))
+		{
+			cedulaMensaje = "El campo cédula no puede estar vacío";
+			await Task.Delay(4000);
+			LimpiarPantalla();
+			return;
+		}
+
+		//patron para la cedula @"\d{3}-\d{7}-\d{1}"
+		var patronCedula = @"\d{3}-\d{7}-\d{1}";
+
+		if (!System.Text.RegularExpressions.Regex.IsMatch(proveedor.CedulaRepresentante, patronCedula))
+		{
+			cedulaMensaje = "El campo cédula no cumple el formato, xxx-xxxxxxx-x";
+			await Task.Delay(4000);
+			LimpiarPantalla();
+			return;
+		}
+
+		if(proveedor.ProveedorDetalle.Count == 0)
+		{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al crear",
+					Detail = "Debe haber por lo menos 1 detalle",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+
+			return;
+		}
+
+		if(await ValidarProveedor())
+		{
+			await proveedoresService.Crear(proveedor);
+
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Success,
+					Summary = "Éxito al crear",
+					Detail = "El proveedor fue creado con éxito",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+
+			await Task.Delay(4000);
+			Volver();
+		}
+		else
+		{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al crear",
+					Detail = "Algunos datos no se pueden utilizar",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+		}
+
+		await Task.Delay(4000);
+		LimpiarPantalla();
+	}
+
+	public async Task ErrorAlCrear()
+	{
+		var Mensaje = new NotificationMessage
+			{
+				Severity = NotificationSeverity.Error,
+				Summary = "Error al crear",
+				Detail = "Revise que no haya campos vacíos o con un formato inapropiado",
+				Duration = 5_000
+			};
+		notificationService.Notify(Mensaje);
+
+		if (String.IsNullOrEmpty(proveedor.CedulaRepresentante))
+			cedulaMensaje = "El campo cédula no puede estar vacío";
+
+		await Task.Delay(4000);
+		LimpiarPantalla();
+	}
+
+	public async Task AgregarDetalle()
+	{
+		if (tipo == 0 || descripcion is null)
+		{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al agregar detalle",
+					Detail = "No pueden haber campos vacíos",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+
+			return;
+		}
+
+		if (descripcion.Length != 12)
+		{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al agregar detalle",
+					Detail = "El número debe de tener 10 dígitos",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+
+			return;
+		}
+
+		else
+		{
+			if(await ValidarDetalle())
+			{
+				var nuevoDetalle = new ProveedoresDetalle { ContactoId = tipo, Contacto = descripcion};
+				proveedor.ProveedorDetalle.Add(nuevoDetalle);
+
+				var Mensaje = new NotificationMessage
+					{
+						Severity = NotificationSeverity.Success,
+						Summary = "Éxito al agregar detalle",
+						Detail = "El detalle fue agregado con éxito",
+						Duration = 5_000
+					};
+				notificationService.Notify(Mensaje);
+
+				LimpiarPantalla();
+			}
+			else
+			{
+				var Mensaje = new NotificationMessage
+					{
+						Severity = NotificationSeverity.Error,
+						Summary = "Error al agregar detalle",
+						Detail = "Ya existe este número",
+						Duration = 5_000
+					};
+				notificationService.Notify(Mensaje);
+			}
+		}
+	}
+
+	public void ValidarEliminarDetalle(ProveedoresDetalle detalle)
+	{
+		descripcionModal = ObtenerTipoContacto(detalle.ContactoId);
+		detalleModal = detalle;
+		mostrarModal2 = true;
+	}
+
+	public void EliminarDetalle()
+	{
+		mostrarModal2 = false;
+		detalleModal.Eliminado = true;
+		tipo = detalleModal.ContactoId;
+		descripcion = detalleModal.Contacto;
+
+		var Mensaje = new NotificationMessage
+			{
+				Severity = NotificationSeverity.Success,
+				Summary = "Éxito al eliminar detalle",
+				Detail = "El detalle fue eliminado con éxito",
+				Duration = 5_000
+			};
+		notificationService.Notify(Mensaje);
+	}
+
+	public string ObtenerTipoContacto(int id)
+	{
+		var contacto = numeros.FirstOrDefault(n => n.NumeroId == id);
+		return contacto.Numero;
+	}
+
+	public async Task<bool> ValidarProveedor()
+	{
+		var validar = await proveedoresService.Listar(p => p.Eliminado == false);
+		var empresa = validar.FirstOrDefault(p => p.Empresa == proveedor.Empresa);
+		var cedula = validar.FirstOrDefault(p => p.CedulaRepresentante == proveedor.CedulaRepresentante);
+		var email = validar.FirstOrDefault(p => p.Email == proveedor.Email);
+		var cuenta = validar.FirstOrDefault(p => p.NumeroCuenta == proveedor.NumeroCuenta);
+		var rnc = validar.FirstOrDefault(p => p.RNC == proveedor.RNC);
+
+		bool empresaValida = true;
+		bool cedulaValida = true;
+		bool emailValida = true;
+		bool cuentaValida = true;
+		bool rncValida = true;
+
+		if(empresa != null)
+		{
+			empresaValida = false;
+			empresaMensaje = "Ya existe un proveedor con esta empresa";
+		}
+
+		if (cedula != null)
+		{
+			cedulaValida = false;
+			cedulaMensaje = "Ya existe un proveedor con este número de cédula";
+		}
+
+		if (email != null)
+		{
+			emailValida = false;
+			emailMensaje = "Ya existe un proveedor con este email";
+		}
+
+		if (cuenta != null)
+		{
+			cuentaValida = false;
+			cuentaMensaje = "Ya existe un proveedor con este número de cuenta";
+		}
+
+		if (rnc != null)
+		{
+			rncValida = false;
+			rncMensaje = "Ya existe un proveedor con este número de RNC";
+		}
+
+		return empresaValida && cedulaValida && emailValida && cuentaValida && rncValida;
+	}
+
+	public async Task<bool> ValidarDetalle()
+	{
+		var validar = await proveedoresService.Listar(p => p.Eliminado == false);
+		var resulBaseDeDato = validar.FirstOrDefault(p => p.ProveedorDetalle.Any(d => d.Contacto == descripcion && d.Eliminado == false));
+		var resulLocal = proveedor.ProveedorDetalle.FirstOrDefault(d => d.Contacto == descripcion && d.Eliminado == false);
+
+		if (resulBaseDeDato != null)
+		{
+			return false;
+		}
+
+		if(resulLocal != null)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	public void PonerGuionCedula(ChangeEventArgs e)
+	{
+		string cedula = (string)e.Value;
+
+		cedula = cedula.Replace("-", "");
+
+		if (cedula.Length > 3 && cedula.Length <= 10)
+		{
+			cedula = cedula.Insert(3, "-");
+		}
+		else if (cedula.Length > 10)
+		{
+			cedula = cedula.Insert(3, "-");
+			cedula = cedula.Insert(11, "-");
+		}
+
+		proveedor.CedulaRepresentante = cedula;
+	}
+
+	public void PonerGuionNumero(ChangeEventArgs e)
+	{
+		string phoneNumber = (string)e.Value;
+
+		phoneNumber = phoneNumber.Replace("-", "");
+
+		if (phoneNumber.Length > 3 && phoneNumber.Length <= 6)
+		{
+			phoneNumber = phoneNumber.Insert(3, "-");
+		}
+		else if (phoneNumber.Length > 6)
+		{
+			phoneNumber = phoneNumber.Insert(3, "-");
+			phoneNumber = phoneNumber.Insert(7, "-");
+		}
+
+		descripcion = phoneNumber;
+	}
+
+
+	public void LimpiarPantalla()
+	{
+		empresaMensaje = string.Empty;
+		cedulaMensaje = string.Empty;
+		emailMensaje = string.Empty;
+		cuentaMensaje = string.Empty;
+		rncMensaje = string.Empty;
+		tipo = 0;
+		descripcion = string.Empty;
+	}
+
+	void Volver()
+	{
+		if (proveedor.Empresa != null || proveedor.Representante != null 
+			|| proveedor.CedulaRepresentante != null || proveedor.Direccion != null 
+			|| proveedor.Email != null
+			|| proveedor.NumeroCuenta != null || proveedor.Banco != null
+			|| proveedor.TipoContribuyenteId != 0
+			|| proveedor.RNC != null || !String.IsNullOrEmpty(proveedor.Nota)
+			|| proveedor.ProveedorDetalle.Count > 0)
+		{
+			mostrarModal1 = true; // Mostrar el modal si la condición se cumple
+		}
+		else
+			VolverAtras();
+	}
+
+	public void CerrarModal()
+	{
+		mostrarModal1 = false;
+		mostrarModal2 = false;
+	}
+
+	public void VolverAtras()
+	{
+		navigation.NavigateTo("/Proveedores");
+	}
+}

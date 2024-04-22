@@ -14,7 +14,7 @@ public class Proveedores
 	public int ProveedorId { get; set; }
 
 	[DisplayFormat(DataFormatString = "{0:dd/MM/yyyy}", ApplyFormatInEditMode = true)]
-	public DateTime FechaCreacion { get; set; }
+	public DateTime FechaCreacion { get; set; } = DateTime.Today;
 
 	[Required(ErrorMessage = "Debe ingresar el nombre de la empresa.")]
 	[StringLength(32, ErrorMessage = "El límite es de 32 caracteres.")]
@@ -25,8 +25,6 @@ public class Proveedores
 	[StringLength(25, ErrorMessage = "El límite es de 32 caracteres.")]
 	public string Representante { get; set; }
 
-	[Required(ErrorMessage = "Debe ingresar el número de cédula del representante.")]
-	[StringLength(13, ErrorMessage = "El límite es de 11 caracteres.")]
 	public string CedulaRepresentante { get; set; }
 
 	[Required(ErrorMessage = "Debe ingresar la dirección de la empresa")]
