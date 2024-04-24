@@ -354,7 +354,7 @@
 			notificationService.Notify(Mensaje);
 
 			await Task.Delay(4000);
-			Volver();
+			VolverAtras();
 		}
 		else
 		{
@@ -399,6 +399,20 @@
 					Severity = NotificationSeverity.Error,
 					Summary = "Error al agregar detalle",
 					Detail = "No pueden haber campos vacíos",
+					Duration = 5_000
+				};
+			notificationService.Notify(Mensaje);
+
+			return;
+		}
+
+		if (!descripcion.All(c => char.IsDigit(c) || c == '-'))
+		{
+			var Mensaje = new NotificationMessage
+				{
+					Severity = NotificationSeverity.Error,
+					Summary = "Error al agregar detalle",
+					Detail = "El número no debe contener letras o caracteres especiales, excepto guiones",
 					Duration = 5_000
 				};
 			notificationService.Notify(Mensaje);
@@ -527,6 +541,7 @@
 			rncMensaje = "Ya existe un proveedor con este número de RNC";
 		}
 
+		StateHasChanged();
 		return empresaValida && cedulaValida && emailValida && cuentaValida && rncValida;
 	}
 

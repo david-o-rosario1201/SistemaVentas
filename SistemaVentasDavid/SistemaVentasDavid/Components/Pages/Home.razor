@@ -1,8 +1,28 @@
 ﻿@page "/"
 @rendermode InteractiveServer
+@inject ProveedoresService proveedoresService
 
 <PageTitle>Home</PageTitle>
 
 <h1>Hello, world!</h1>
 
 Welcome to your new app.
+
+
+<button type="button" class="btn btn-primary position-relative">
+    Inbox
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+        @proveedores.Count
+        <span class="visually-hidden">unread messages</span>
+    </span>
+</button>
+
+
+@code {
+    public List<Proveedores> proveedores = new List<Proveedores>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        proveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+    }
+}
