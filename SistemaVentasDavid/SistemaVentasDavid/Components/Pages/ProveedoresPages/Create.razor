@@ -240,6 +240,32 @@
 			myModal.show();
 		</script>
 	}
+
+
+
+	@*Toast*@
+	<button type="button" class="btn btn-primary" @onclick="ShowLiveToast">Show live toast</button>
+
+	@if (ShowToast)
+	{
+		<div class="toast-container position-fixed bottom-0 end-0 p-3">
+			<div id="liveToast" class="toast show" role="alert" aria-live="assertive" aria-atomic="true">
+				<div class="toast-header">
+					<img src="Images/vendedor.png" class="icon" alt="tienda">
+					<strong class="me-auto px-2">Sistema de Ventas</strong>
+					<small>11 mins ago</small>
+					<button type="button" class="btn-close" @onclick="() => ShowToast = false" aria-label="Close"></button>
+				</div>
+				<div class="toast-body">
+					Hello, world! This is a toast message.
+					Video provides a powerful way to help you prove your point. When you click Online Video, you can paste in the embed code for the video you want to add.
+					You can also type a keyword to search online for the video that best fits your document. To make your document look professionally produced, Word provides header, footer, cover page, and text box designs that complement each other.
+					For example, you can add a matching cover page, header, and sidebar. Click Insert and then choose the elements you want from the different galleries.
+
+				</div>
+			</div>
+		</div>
+	}
 </EditForm>
 
 @code {
@@ -261,6 +287,15 @@
 	public bool mostrarModal2 { get; set; }
 	public string descripcionModal { get; set; }
 	public ProveedoresDetalle detalleModal { get; set; } = new ProveedoresDetalle();
+
+	bool ShowToast = false;
+
+	async Task ShowLiveToast()
+	{
+		ShowToast = true;
+		await Task.Delay(4000);
+		ShowToast = false;
+	}
 
 	protected override async Task OnInitializedAsync()
 	{

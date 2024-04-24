@@ -35,7 +35,7 @@
 			</div>
 		</div>
 		@*Body*@
-		<div class="card-body text-center">
+		<div class="card-body">
 			@if (loading)
 			{
 				<div class="d-flex justify-content-center">
@@ -138,7 +138,7 @@
 			}
 		</div>
 		@*Footer*@
-		<div class="card-footer text-center">
+		<div class="card-footer">
 			<p><strong>Total de Proveedores:</strong> @proveedores.Count</p>
 		</div>
 	</div>
@@ -155,7 +155,7 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		await Task.Delay(500);
+		// await Task.Delay(500);
 		proveedores = await proveedoresService.Listar(p => p.Eliminado == false);
 		tiposContribuyente = await tiposContribuyenteService.Listar(tc => tc.TipoContribuyenteId > 0);
 

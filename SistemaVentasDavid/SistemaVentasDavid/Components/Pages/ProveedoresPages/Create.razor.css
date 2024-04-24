@@ -14,3 +14,8 @@
 .mensajeError {
     color: red;
 }
+
+.icon {
+    max-width: 30px; /* Define el ancho máximo deseado */
+    max-height: 30px; /* Define la altura máxima deseada */
+}
