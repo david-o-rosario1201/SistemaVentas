@@ -1,17 +1,53 @@
 ﻿@inherits LayoutComponentBase
+@inject NavigationManager navigation
 <RadzenNotification />
 
 <div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+    @*  <div class="sidebar">
+    <NavMenu />
+    </div> *@
 
     <main>
         <div class="top-row px-4">
+            @* <button type="button" class="btn btn-toolbar"></button> *@
+
+            <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasExample" aria-controls="offcanvasExample">
+                Men&uacute;
+            </button>
+
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
         <article class="content px-4">
+            <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel" style="width: 300px;">
+                <div class="offcanvas-header">
+                    <img src="Images/vendedor.png" class="icon me-2" alt="tienda">
+                    <h5 class="offcanvas-title" id="offcanvasExampleLabel"><strong>Sistema de Ventas</strong></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div>
+                <hr class="m-0">
+
+                @*Otra forma*@
+                @* <div class="offcanvas-header d-flex align-items-center justify-content-start">
+                    <!-- Utiliza flexbox para alinear verticalmente los elementos -->
+                    <img src="Images/vendedor.png" class="icon me-2" alt="tienda"> <!-- Agrega la clase 'me-2' para agregar un margen a la derecha -->
+                    <h5 class="offcanvas-title mb-0" id="offcanvasExampleLabel" style="margin-top: 0;">
+                        <!-- Agrega la clase 'mb-0' para eliminar el margen inferior -->
+                        <strong>Sistema de Ventas</strong>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                </div> *@
+
+                <div class="offcanvas-body">
+                    <div>
+                        Some text as placeholder. In real life you can have the elements you have chosen. Like, text, images, lists, etc.
+                    </div>
+                    <div class="dropdown mt-3">
+                        <a href="/Proveedores" class="btn btn-secondary">Proveedores</a>
+                    </div>
+                </div>
+            </div>
+
             @Body
         </article>
     </main>

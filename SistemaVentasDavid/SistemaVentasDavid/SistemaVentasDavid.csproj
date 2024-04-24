@@ -8,6 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Blazorise" Version="1.5.2" />
+    <PackageReference Include="Blazorise.Bootstrap" Version="1.5.2" />
     <ProjectReference Include="..\..\Library\Library.csproj" />
     <ProjectReference Include="..\SistemaVentasDavid.Client\SistemaVentasDavid.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.4" />
@@ -16,6 +18,10 @@
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.4" />
     <PackageReference Include="Radzen.Blazor" Version="4.29.8" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\Images\" />
   </ItemGroup>
 
 </Project>
