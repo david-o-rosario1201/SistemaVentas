@@ -1,38 +1,17 @@
-﻿@page "/Proveedores"
+﻿@page "/HistorialProveedores"
 @rendermode InteractiveServer
-@inject NavigationManager navigation
 @inject ProveedoresService proveedoresService
 @inject TiposContribuyenteService tiposContribuyenteService
+@inject NavigationManager navigation
 @inject NotificationService notificationService
 
-<PageTitle>Proveedores</PageTitle>
+<PageTitle>Historial de Proveedores</PageTitle>
 <RadzenNotification />
 <div class="container">
 	<div class="card shadow-lg">
 		@*Header*@
 		<div class="card-header">
-			<h1 class="text-center"><strong>Proveedores</strong></h1>
-			<div class="d-flex align-items-start">
-				<div class="container">
-					<div class="row">
-						<div class="d-flex align-items-start">
-							<div class="px-2">
-								@* <button type="button" class="btn btn-outline-secondary" @onclick="Volver">
-									<i class="bi bi-box-arrow-left" /> Volver
-								</button> *@
-							</div>
-							<button type="button" class="btn btn-outline-primary" @onclick="IrACrear">
-								<i class="bi bi-plus-circle" /> Crear
-							</button>
-							<div class="col text-end">
-								@* <button type="button" class="btn btn-back-to-history" @onclick="IrAHistorial">
-									<i class="bi bi-newspaper"></i> Historial
-								</button> *@
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
+			<h1 class="text-center"><strong>Historial de Proveedores</strong></h1>
 		</div>
 		@*Body*@
 		<div class="card-body">
@@ -109,7 +88,7 @@
 						</tr>
 					</thead>
 					<tbody>
-						@foreach(var proveedor in proveedores)
+						@foreach (var proveedor in proveedores)
 						{
 							<tr>
 								<td>@proveedor.ProveedorId</td>
@@ -123,13 +102,12 @@
 										<button type="button" class="btn btn-outline-info" @onclick="()=> IrADetalles(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Ver detalles">
 											<i class="bi bi-eye"></i>
 										</button>
-
-										<button type="button" class="btn btn-outline-warning" @onclick="()=> IrAEditar(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Editar">
-											<i class="bi bi-pencil-square"></i>
-										</button>
-										<button type="button" class="btn btn-outline-danger" @onclick="()=> IrAEliminar(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Eliminar">
-											<i class="bi bi-trash3-fill"></i>
-										</button>
+										@if (proveedor.Eliminado == true)
+										{
+											<button type="button" class="btn btn-outline-success" @onclick="()=> Restaurar(proveedor.ProveedorId)" data-bs-toggle="tooltip" data-bs-placement="top" title="Restaurar">
+												<i class="bi bi-clock-history"></i>
+											</button>
+										}
 									</div>
 								</td>
 							</tr>
@@ -147,17 +125,16 @@
 
 @code {
 	public bool loading { get; set; } = true;
-	public List<Proveedores> proveedores { get; set; } = new List<Proveedores>();
-	public List<TiposContribuyente> tiposContribuyente { get; set; } = new List<TiposContribuyente>();
 	public DateTime desde { get; set; } = DateTime.Today;
 	public DateTime hasta { get; set; } = DateTime.Today;
 	public string filtro { get; set; }
 	public string valorFiltro { get; set; }
+	public List<Proveedores> proveedores = new List<Proveedores>();
+	public List<TiposContribuyente> tiposContribuyente = new List<TiposContribuyente>();
 
 	protected override async Task OnInitializedAsync()
 	{
-		// await Task.Delay(500);
-		proveedores = await proveedoresService.Listar(p => p.Eliminado == false);
+		proveedores = await proveedoresService.Listar(p => p.ProveedorId > 0);
 		tiposContribuyente = await tiposContribuyenteService.Listar(tc => tc.TipoContribuyenteId > 0);
 
 		loading = false;
@@ -169,36 +146,36 @@
 
 	public async Task Buscar()
 	{
-		if(desde > hasta)
+		if (desde > hasta)
 		{
 			MostrarNotificacion(
-				"error","La fecha inicial no debe ser mayor a la fecha final","Error al filtrar");
+				"error", "La fecha inicial no debe ser mayor a la fecha final", "Error al filtrar");
 			return;
 		}
 
-		if(filtro is null)
+		if (filtro is null)
 		{
 			MostrarNotificacion(
 				"error", "Debe elegir un filtro", "Error al filtrar");
 			return;
 		}
 
-		if(valorFiltro is null)
+		if (valorFiltro is null)
 		{
 			MostrarNotificacion(
 				"error", "Debe ingresar un dato para filtrar", "Error al filtrar");
 			return;
 		}
 
-		switch(filtro)
+		switch (filtro)
 		{
 			case "id":
-				if(int.TryParse(valorFiltro, out int id))
+				if (int.TryParse(valorFiltro, out int id))
 				{
 					var buscarId = proveedores.FirstOrDefault
 					(p => p.ProveedorId == id && p.FechaCreacion >= desde && p.FechaCreacion <= hasta);
 
-					if(buscarId != null)
+					if (buscarId != null)
 					{
 						proveedores.Clear();
 						proveedores.Add(buscarId);
@@ -217,10 +194,10 @@
 
 			case "empresa":
 				var empresa = proveedores.Where
-				(p => p.Empresa.ToLower().Contains(valorFiltro.ToLower()) 
+				(p => p.Empresa.ToLower().Contains(valorFiltro.ToLower())
 				&& p.FechaCreacion >= desde && p.FechaCreacion <= hasta).ToList();
 
-				if(empresa.Count > 0)
+				if (empresa.Count > 0)
 				{
 					proveedores = empresa;
 					MostrarNotificacion("exito", "Datos encontrados con éxito", "Éxito al filtrar");
@@ -282,12 +259,12 @@
 	public async Task Restablecer()
 	{
 		proveedores = await proveedoresService.Listar(p => p.Eliminado == false);
-		MostrarNotificacion("exito","Los datos fueron restaurados con éxito","Éxito al restaurar");
+		MostrarNotificacion("exito", "Los datos fueron restaurados con éxito", "Éxito al restaurar");
 	}
 
 	public void MostrarNotificacion(string tipo, string mensaje, string summary)
 	{
-		if(tipo == "exito")
+		if (tipo == "exito")
 		{
 			var Mensaje = new NotificationMessage
 				{
@@ -299,7 +276,7 @@
 			notificationService.Notify(Mensaje);
 		}
 
-		if(tipo == "error")
+		if (tipo == "error")
 		{
 			var Mensaje = new NotificationMessage
 				{
@@ -326,24 +303,16 @@
 
 	public string BuscarContribuyente(int id)
 	{
-		var contribuyente = tiposContribuyente.FirstOrDefault(tc => tc.TipoContribuyenteId == id);
-		return contribuyente.TipoContribuyente;
+		return "hola";
 	}
 
-	public void IrACrear()
-	{
-		navigation.NavigateTo("/CreateProveedores");
-	}
 	public void IrADetalles(int id)
 	{
-		navigation.NavigateTo($"/ViewProveedores/proveedorId={id}");
+		
 	}
-	public void IrAEditar(int id)
+
+	public void Restaurar(int id)
 	{
-		navigation.NavigateTo($"/EditProveedores/proveedorId={id}");
-	}
-	public void IrAEliminar(int id)
-	{
-		navigation.NavigateTo($"/DeleteProveedores/proveedorId={id}");
+
 	}
 }

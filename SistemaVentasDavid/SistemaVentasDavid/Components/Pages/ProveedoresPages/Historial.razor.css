@@ -1,0 +1,28 @@
+﻿.miMensaje {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.miTabla {
+    text-align: center;
+}
+
+.miFlecha {
+    margin-top: 10px;
+}
+
+.mensajeError {
+    color: red;
+}
+
+.btn-back-to-history {
+    background-color: #6c757d;
+    color: #ffffff;
+    border-color: #6c757d;
+}
+
+
+    .btn-back-to-history:hover {
+        background-color: #495057;
+        color: #ffffff;
+    }
